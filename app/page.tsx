@@ -34,8 +34,8 @@ export default function Home() {
 						</ul>
 					</div>
 					<div className="rounded-md border border-dashed p-4 bg-muted/50 text-muted-foreground text-sm max-w-md mx-auto">
-						Start by adding a folder and some valid <code>.md</code> files to
-						your Obsidian vault to get started
+						See the example folder structure in <code>content/</code> to
+						understand how your notes are organized and rendered.
 					</div>
 					<div className="space-x-4">
 						<Button size="lg">
