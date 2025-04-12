@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { Star } from "lucide-react";
 import Image from "next/image";
 
 export default function Home() {
@@ -9,7 +10,7 @@ export default function Home() {
 			<BgBorder />
 
 			{/* Content area */}
-			<div className="absolute left-[10%] right-[10%] md:left-[20%] md:right-[20%] top-[10%] md:top-[20%] bottom-[10%] md:bottom-[20%] flex items-center justify-center overflow-auto">
+			<div className="absolute left-[10%] right-[10%] md:left-[20%] md:right-[20%] top-[10%] md:top-[15%] bottom-[10%] md:bottom-[15%] flex items-center justify-center overflow-hidden">
 				<div className="max-w-full p-8 text-center space-y-6">
 					<h1 className="text-5xl font-medium tracking-tight">
 						Obsidian Vercel
@@ -32,6 +33,10 @@ export default function Home() {
 							<li>Secure-by-default with no exposed metadata</li>
 						</ul>
 					</div>
+					<div className="rounded-md border border-dashed p-4 bg-muted/50 text-muted-foreground text-sm max-w-md mx-auto">
+						Start by adding a folder and some valid <code>.md</code> files to
+						your Obsidian vault to get started
+					</div>
 					<div className="space-x-4">
 						<Button size="lg">
 							Deploy on{" "}
@@ -39,8 +44,8 @@ export default function Home() {
 								<Image
 									src="/vercel.svg"
 									alt="Vercel"
-									width={16}
-									height={16}
+									width={15}
+									height={15}
 									className="inline-block"
 								/>
 								Vercel
@@ -48,6 +53,7 @@ export default function Home() {
 						</Button>
 						<Button size="lg" variant="ghost" asChild>
 							<Link href="https://github.com/adriandlam/obsidian-vercel">
+								<Star className="size-4" />
 								Star on GitHub
 							</Link>
 						</Button>
@@ -66,25 +72,25 @@ function BgBorder() {
 			<div className="absolute right-[5%] md:right-[20%] top-0 h-full border-l border-dashed" />
 
 			{/* Horizontal borders */}
-			<div className="absolute top-[10%] md:top-[20%] left-0 w-full border-t border-dashed" />
-			<div className="absolute bottom-[10%] md:bottom-[20%] left-0 w-full border-t border-dashed" />
+			<div className="absolute top-[10%] md:top-[15%] left-0 w-full border-t border-dashed" />
+			<div className="absolute bottom-[10%] md:bottom-[15%] left-0 w-full border-t border-dashed" />
 
 			{/* Crosses at intersections */}
 			{/* Top-left intersection */}
-			<div className="absolute left-[5%] top-[10%] md:left-[20%] md:top-[20%] w-4 h-[2px] bg-primary z-10 rounded-sm" />
-			<div className="absolute left-[5%] top-[10%] md:left-[20%] md:top-[20%] w-[2px] h-4 bg-primary z-10 rounded-sm" />
+			<div className="absolute left-[5%] top-[10%] md:left-[20%] md:top-[15%] w-4 h-[2px] bg-primary z-10 rounded-sm" />
+			<div className="absolute left-[5%] top-[10%] md:left-[20%] md:top-[15%] w-[2px] h-4 bg-primary z-10 rounded-sm" />
 
 			{/* Top-right intersection */}
-			<div className="absolute right-[5%] top-[10%] md:right-[20%] md:top-[20%] w-4 h-[2px] bg-primary z-10 rounded-sm" />
-			<div className="absolute right-[5%] top-[10%] md:right-[20%] md:top-[20%] w-[2px] h-4 bg-primary z-10 rounded-sm" />
+			<div className="absolute right-[5%] top-[10%] md:right-[20%] md:top-[15%] w-4 h-[2px] bg-primary z-10 rounded-sm" />
+			<div className="absolute right-[5%] top-[10%] md:right-[20%] md:top-[15%] w-[2px] h-4 bg-primary z-10 rounded-sm" />
 
 			{/* Bottom-left intersection */}
-			<div className="absolute left-[5%] bottom-[10%] md:left-[20%] md:bottom-[20%] w-4 h-[2px] bg-primary z-10 rounded-sm" />
-			<div className="absolute left-[5%] bottom-[10%] md:left-[20%] md:bottom-[20%] w-[2px] h-4 bg-primary z-10 rounded-sm" />
+			<div className="absolute left-[5%] bottom-[10%] md:left-[20%] md:bottom-[15%] w-4 h-[2px] bg-primary z-10 rounded-sm" />
+			<div className="absolute left-[5%] bottom-[10%] md:left-[20%] md:bottom-[15%] w-[2px] h-4 bg-primary z-10 rounded-sm" />
 
 			{/* Bottom-right intersection */}
-			<div className="absolute right-[5%] bottom-[10%] md:right-[20%] md:bottom-[20%] w-4 h-[2px] bg-primary z-10 rounded-sm" />
-			<div className="absolute right-[5%] bottom-[10%] md:right-[20%] md:bottom-[20%] w-[2px] h-4 bg-primary z-10 rounded-sm" />
+			<div className="absolute right-[5%] bottom-[10%] md:right-[20%] md:bottom-[15%] w-4 h-[2px] bg-primary z-10 rounded-sm" />
+			<div className="absolute right-[5%] bottom-[10%] md:right-[20%] md:bottom-[15%] w-[2px] h-4 bg-primary z-10 rounded-sm" />
 		</>
 	);
 }
