@@ -259,10 +259,15 @@ export default function SearchDialog() {
 
 									// Determine the best snippet to show based on HIGHEST score
 									let bestSnippetSourceResult: FuzzysortKeyResult | null = null;
-									const contentScore = contentResult?.score ?? Number.NEGATIVE_INFINITY;
-									const excerptScore = excerptResult?.score ?? Number.NEGATIVE_INFINITY;
+									const contentScore =
+										contentResult?.score ?? Number.NEGATIVE_INFINITY;
+									const excerptScore =
+										excerptResult?.score ?? Number.NEGATIVE_INFINITY;
 
-									if (contentScore > excerptScore && contentScore > Number.NEGATIVE_INFINITY) {
+									if (
+										contentScore > excerptScore &&
+										contentScore > Number.NEGATIVE_INFINITY
+									) {
 										bestSnippetSourceResult = contentResult;
 									} else if (excerptScore > Number.NEGATIVE_INFINITY) {
 										bestSnippetSourceResult = excerptResult;
@@ -302,7 +307,17 @@ export default function SearchDialog() {
 											>
 												{/* Render title snippet or plain title */}
 												<div className="font-medium text-foreground mb-1">
-													{titleSnippet || result.obj.title}
+													<span
+														className="[&_mark]:bg-muted [&_mark]:text-red-400 [&_mark]:font-medium [&_mark]:rounded"
+														dangerouslySetInnerHTML={{
+															__html: sanitize(
+																titleSnippet || result.obj.title,
+																{
+																	allowedTags: ["mark"],
+																},
+															),
+														}}
+													/>
 												</div>
 												{/* Render content/excerpt snippet */}
 												<span

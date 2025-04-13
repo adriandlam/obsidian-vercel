@@ -4,7 +4,6 @@ import { fileURLToPath } from "node:url";
 import { getAllPublishedNotesData } from "../lib/content";
 import ora from "ora";
 import chalk from "chalk";
-import { CONTENT_DIR } from "@/data";
 
 // Helper to get project root directory
 const __filename = fileURLToPath(import.meta.url);
@@ -17,7 +16,7 @@ const outputPath = path.join(outputDir, "search-index.json");
 
 async function generateIndex() {
 	const startTime = Date.now();
-	const spinner = ora(`Generating search index for ${chalk.gray(`${CONTENT_DIR}/`)}...`).start();
+	const spinner = ora(`Generating search index for ${chalk.gray(path.relative(projectRoot, "content"))}...`).start();
 	console.log("")
 
 	try {
@@ -42,9 +41,10 @@ async function generateIndex() {
 			? `${elapsed}ms`
 			: `${(elapsed / 1000).toFixed(2)}s`;
 
-		console.log(`${chalk.gray(outputPath)}`);
+		console.log(chalk.gray(path.relative(projectRoot, outputPath)));
 		console.log("");
 		console.log(`Done in ${formattedTime}`);
+		process.exit(0)
 	} catch (error) {
 		spinner.fail(chalk.red("Failed to generate search index."));
 		console.error(chalk.red("Error:"), error);
