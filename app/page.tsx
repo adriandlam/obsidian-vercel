@@ -38,20 +38,25 @@ export default function Home() {
 						understand how your notes are organized and rendered.
 					</div>
 					<div className="space-x-4">
-						<Button size="lg">
-							Deploy on{" "}
-							<span className="flex items-center gap-1.5 ml-1.5">
-								<Image
-									src="/vercel.svg"
-									alt="Vercel"
-									width={15}
-									height={15}
-									className="inline-block"
-								/>
-								Vercel
-							</span>
+						<Button size="lg" asChild>
+							<Link
+								target="_blank"
+								href="https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fadriandlam%2Fobsidian-vercel&project-name=obsidian-vercel&repository-name=obsidian-vercel"
+							>
+								Deploy on{" "}
+								<span className="flex items-center gap-1.5 ml-1.5">
+									<Image
+										src="/vercel.svg"
+										alt="Vercel"
+										width={15}
+										height={15}
+										className="inline-block dark:invert"
+									/>
+									Vercel
+								</span>
+							</Link>
 						</Button>
-						<Button size="lg" variant="ghost" asChild>
+						<Button size="lg" variant="link" asChild>
 							<Link href="https://github.com/adriandlam/obsidian-vercel">
 								<Star className="size-4" />
 								Star on GitHub

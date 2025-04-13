@@ -1,7 +1,6 @@
 ---
 title: Example Home Page
-tags: [example, homepage]
-aliases: ["Example Index", "Example Landing"]
+excerpt: This is an optional excerpt for the example page. This gives you a quick summary of the page's content.
 created: 2025-04-12
 updated: 2025-04-12
 publish: true
@@ -55,4 +54,16 @@ def hello_world():
 
 **Math Example**
 
-$$ E = mc^2 $$
+Or some math? Discrete Fourier transforms 😢
+
+$$
+
+\begin{align*}
+
+\text{DFT}(x) &= \frac{A_1N}{2}e^{i\phi_1}\mathbf{\hat e_{k_1}} + \frac{A_1N}{2}e^{-i\phi_1}\mathbf{\hat e_{N - k_1}} + \dots + \frac{A_mN}{2}e^{i\phi_m}\mathbf{\hat e_{k_m}} + \frac{A_mN}{2}e^{-i\phi_m}\mathbf{\hat e_{N - k_m}} \\
+
+&= \sum_{m=1}^{m} \frac{A_mN}{2}e^{i\phi_m}\mathbf{\hat e_{k_m}} + \frac{A_mN}{2}e^{-i\phi_m}\mathbf{\hat e_{N - k_m}}
+
+\end{align*}
+
+$$

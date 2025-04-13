@@ -11,3 +11,5 @@ A quick, easy setup for publishing your Obsidian notes to [Vercel](https://verce
 3. Deploy to Vercel
 
 That's all!
+
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fadriandlam%2Fobsidian-vercel&project-name=obsidian-vercel&repository-name=obsidian-vercel)

@@ -129,6 +129,10 @@
   }
 }
 
+.katex-display {
+  @apply block overflow-auto text-center !my-8;
+}
+
 a {
-	@apply underline underline-offset-2;
+	@apply underline-offset-2
 }

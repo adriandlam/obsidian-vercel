@@ -1,6 +1,4 @@
-import fs from "fs";
-import path from "path";
-import matter from "gray-matter";
+import React from "react";
 import { MDXRemote } from "next-mdx-remote/rsc";
 import rehypeKatex from "rehype-katex";
 import remarkMath from "remark-math";
@@ -10,63 +8,20 @@ import rehypeHighlight from "rehype-highlight";
 import remarkGfm from "remark-gfm";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
-import { ExternalLink } from "lucide-react";
+import { Copy, ExternalLink } from "lucide-react";
 import remarkSmartypants from "remark-smartypants";
 import { CONTENT_DIR } from "@/data";
-
-// Helper function to read file and parse frontmatter
-// Returns null if file doesn't exist or reading fails
-function readFileAndMatter(
-	filePath: string,
-): { metadata: Record<string, unknown>; content: string } | null {
-	try {
-		const fileContent = fs.readFileSync(filePath, "utf8");
-		const { data: metadata, content } = matter(fileContent);
-		return { metadata, content };
-	} catch (error: any) {
-		if (error.code === "ENOENT") {
-			// File not found, this is expected in some cases
-		} else {
-			// Log other errors (e.g., permission issues)
-			console.error(`Error reading file ${filePath}:`, error);
-		}
-		return null;
-	}
-}
-
-// Helper function to get the MDX content and metadata
-async function getNoteBySlug(slugArray: string[]) {
-	if (!slugArray || slugArray.length === 0) {
-		return null;
-	}
-
-	// Try reading direct file match (e.g., /class-1/example -> content/class-1/example.md)
-	const directPathBase = path.join(CONTENT_DIR, ...slugArray);
-	let note = readFileAndMatter(`${directPathBase}.md`);
-	if (note) return note;
-
-	note = readFileAndMatter(`${directPathBase}.mdx`);
-	if (note) return note;
-
-	// If no direct file, try reading an index file within a directory of the same name
-	// (e.g., /class-1 -> content/class-1/index.md)
-	const indexPathBase = path.join(CONTENT_DIR, ...slugArray);
-	note = readFileAndMatter(`${indexPathBase}/index.md`);
-	if (note) return note;
-
-	note = readFileAndMatter(`${indexPathBase}/index.mdx`);
-	if (note) return note;
-
-	// If neither found, return null
-	console.warn(`No content file found for slug: ${slugArray.join("/")}`);
-	return null;
-}
+import { cn } from "@/lib/utils";
+import CopyButton from "@/components/CopyButton";
+import { findMarkdownPaths, getNoteBySlug } from "@/lib/content";
+import { generateHeadingId, extractText } from "@/lib/md-utils";
 
 export default async function Page({ params }: { params: { slug: string[] } }) {
 	const slugArray = params.slug ?? [];
 
+	// Handle root index.md or index.mdx if slug is empty
 	if (slugArray.length === 0) {
-		notFound();
+		slugArray.push("index");
 	}
 
 	const note = await getNoteBySlug(slugArray);
@@ -77,90 +32,159 @@ export default async function Page({ params }: { params: { slug: string[] } }) {
 
 	const { metadata, content } = note;
 
+	// Check publish status *after* confirming the note exists
 	if (metadata.publish === false) {
+		console.log(`Note "${slugArray.join("/")}" is not published.`);
 		notFound();
 	}
 
-	const generateHeadingId = (children: React.ReactNode): string => {
-		return (
-			children
-				?.toString()
-				.toLowerCase()
-				.replace(/[^a-z0-9\s-]/g, "")
-				.trim()
-				.replace(/\s+/g, "-") ?? ""
-		);
-	};
-
 	return (
 		<article className="prose prose-invert max-w-none">
-			{metadata.title && <h1 className="!mb-0">{metadata.title}</h1>}
-			{metadata.subtitle && (
-				<p className="text-zinc-400 !mt-2">{metadata.subtitle}</p>
+			{metadata.title && <h1 className="!mb-0 text-lg">{metadata.title}</h1>}
+			{metadata.created && (
+				<p className="text-muted-foreground text-sm">
+					Created {new Date(metadata.created).toDateString()}
+				</p>
 			)}
+			{metadata.updated && (
+				<p className="text-muted-foreground text-sm">
+					Last updated {new Date(metadata.updated).toDateString()}
+				</p>
+			)}
+			{metadata.excerpt && (
+				<p className="text-muted-foreground text-sm mt-4">{metadata.excerpt}</p>
+			)}
+			<div className="w-full border-b h-1 mt-4" />
 			<MDXRemote
 				source={content}
 				components={{
-					h1: ({ children }) => (
+					h1: ({ children, ...props }) => (
 						<h1
 							className="text-4xl mt-12 mb-6 font-medium"
 							id={generateHeadingId(children)}
+							{...props}
 						>
 							{children}
 						</h1>
 					),
-					h2: ({ children }) => (
+					h2: ({ children, ...props }) => (
 						<h2
 							className="text-3xl mt-10 mb-4 font-medium"
 							id={generateHeadingId(children)}
+							{...props}
 						>
 							{children}
 						</h2>
 					),
-					h3: ({ children }) => (
+					h3: ({ children, ...props }) => (
 						<h3
 							className="text-2xl mt-8 mb-3 font-medium"
 							id={generateHeadingId(children)}
+							{...props}
 						>
 							{children}
 						</h3>
 					),
-					h4: ({ children }) => (
+					h4: ({ children, ...props }) => (
 						<h4
 							className="text-xl mt-6 mb-2 font-medium"
 							id={generateHeadingId(children)}
+							{...props}
 						>
 							{children}
 						</h4>
 					),
-					p: ({ children }) => <p className="my-4 leading-7">{children}</p>,
-					ul: ({ children }) => (
-						<ul className="list-disc ml-6 my-4">{children}</ul>
+					p: ({ children, ...props }) => (
+						<p className="my-4 leading-7" {...props}>
+							{children}
+						</p>
 					),
-					ol: ({ children }) => (
-						<ol className="list-decimal ml-6 my-4">{children}</ol>
+					ul: ({ children, ...props }) => (
+						<ul className="list-disc ml-6 my-4" {...props}>
+							{children}
+						</ul>
 					),
-					li: ({ children }) => <li className="mb-2">{children}</li>,
-					blockquote: ({ children }) => (
-						<blockquote className="border-l-4 border-muted-foreground pl-4 italic text-muted-foreground my-6">
+					ol: ({ children, ...props }) => (
+						<ol className="list-decimal ml-6 my-4" {...props}>
+							{children}
+						</ol>
+					),
+					li: ({ children, ...props }) => (
+						<li className="mb-2" {...props}>
+							{children}
+						</li>
+					),
+					blockquote: ({ children, ...props }) => (
+						<blockquote
+							className="border-l-4 border-muted-foreground pl-4 italic text-muted-foreground my-6"
+							{...props}
+						>
 							{children}
 						</blockquote>
 					),
-					code: ({ children }) => (
-						<code className="hljs px-10 !rounded-sm !text-sm">{children}</code>
-					),
-					pre: ({ children }) => (
-						<pre className="hljs !rounded-sm !text-sm">{children}</pre>
-					),
-					a: ({ children, href }) => (
-						<a
-							className="text-blue-500 inline-flex items-center gap-1"
-							href={href}
-						>
-							{children}
-							<ExternalLink className="size-4" />
-						</a>
-					),
+					pre: ({ children, ...props }) => {
+						let language = "plaintext";
+
+						if (React.isValidElement(children) && children.props) {
+							const childProps = children.props as { className?: string };
+							const className = childProps.className ?? "";
+							const match = className.match(/language-(\S+)/);
+							if (match && match[1]) {
+								language = match[1];
+							}
+						}
+
+						return (
+							<pre
+								className="hljs !rounded-2xl !text-sm overflow-x-auto !shadow"
+								data-language={language}
+								{...props}
+							>
+								<div className="border-b px-4 py-2 border-muted-foreground/50 flex justify-between items-center">
+									{language}
+									<CopyButton content={extractText(children)} />
+								</div>
+								<div className="p-4">{children}</div>
+							</pre>
+						);
+					},
+					code: ({ children, className, ...props }) => {
+						const isInline =
+							typeof children === "string" &&
+							!children.includes("\n") &&
+							!className?.includes("language-");
+
+						if (isInline) {
+							return (
+								<code
+									className="!rounded !text-sm bg-muted px-1.5 py-0.5 font-mono text-red-500"
+									{...props}
+								>
+									{children}
+								</code>
+							);
+						}
+						return (
+							<code className={cn("!p-0", className)} {...props}>
+								{children}
+							</code>
+						);
+					},
+					a: ({ children, href, ...props }) => {
+						const isExternal = href?.startsWith("http");
+						return (
+							<a
+								className="text-blue-500 hover:text-blue-400 hover:underline inline-flex items-center gap-1"
+								href={href}
+								target={isExternal ? "_blank" : undefined}
+								rel={isExternal ? "noopener noreferrer" : undefined}
+								{...props}
+							>
+								{children}
+								{isExternal && <ExternalLink className="size-4 ml-0.5" />}
+							</a>
+						);
+					},
 				}}
 				options={{
 					mdxOptions: {
@@ -170,49 +194,11 @@ export default async function Page({ params }: { params: { slug: string[] } }) {
 							[rehypeHighlight, { detect: true, ignoreMissing: true }],
 						],
 					},
-					scope: metadata,
+					scope: metadata, // Pass frontmatter data to MDX
 				}}
 			/>
 		</article>
 	);
-}
-
-// Recursive function to find all .md/.mdx files and return their slug paths
-function findMarkdownPaths(
-	dir: string,
-	basePath: string = dir,
-): { params: { slug: string[] } }[] {
-	let paths: { params: { slug: string[] } }[] = [];
-	const entries = fs.readdirSync(dir, { withFileTypes: true });
-
-	for (const entry of entries) {
-		const fullPath = path.join(dir, entry.name);
-		const relativePath = path.relative(basePath, fullPath);
-		const pathSegments = relativePath.split(path.sep);
-
-		if (entry.isDirectory()) {
-			// Recursively search in subdirectories
-			paths = paths.concat(findMarkdownPaths(fullPath, basePath));
-		} else if (entry.isFile() && /\.(md|mdx)$/i.test(entry.name)) {
-			// Found a markdown file
-			const parsedPath = path.parse(entry.name);
-
-			let slug: string[];
-
-			// See if it's an index file
-			if (/^index$/i.test(parsedPath.name)) {
-				slug = pathSegments.slice(0, -1);
-			} else {
-				slug = [...pathSegments.slice(0, -1), parsedPath.name];
-			}
-
-			if (slug.length > 0 && !slug.some((segment) => segment.startsWith("."))) {
-				paths.push({ params: { slug } });
-			}
-		}
-	}
-
-	return paths;
 }
 
 export async function generateStaticParams() {
