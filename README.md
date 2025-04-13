@@ -1,5 +1,7 @@
 # Obsidian-vercel
 
+![image info](./public/preview.png)
+
 A quick, easy setup for publishing your Obsidian notes to [Vercel](https://vercel.com) for easy syncing and publishing on the go.
 
 ## Setup
