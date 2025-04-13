@@ -1,7 +1,15 @@
 import fs from "fs";
 import matter from "gray-matter";
 import path from "path";
-import { CONTENT_DIR } from "@/data";
+import { CONTENT_DIR } from "../data";
+import { extractTextFromMarkdown } from "./md-utils";
+
+export interface SearchIndexItem {
+	slug: string[];
+	title: string;
+	excerpt?: string;
+	textContent: string;
+}
 
 // Helper function to read file and parse frontmatter
 // Returns null if file doesn't exist or reading fails
@@ -89,4 +97,26 @@ function findMarkdownPaths(
 	return paths;
 }
 
-export { readFileAndMatter, getNoteBySlug, findMarkdownPaths };
+async function getAllPublishedNotesData(): Promise<SearchIndexItem[]> {
+	const allPaths = findMarkdownPaths(CONTENT_DIR);
+	const allNotesData: SearchIndexItem[] = [];
+
+	for (const pathData of allPaths) {
+		const slug = pathData.params.slug;
+		const note = await getNoteBySlug(slug);
+
+		if (note && note.metadata.publish !== false) {
+			const textContent = await extractTextFromMarkdown(note.content);
+			allNotesData.push({
+				slug: slug,
+				title: (note.metadata.title as string) || slug.join(" "),
+				excerpt: (note.metadata.excerpt as string) || undefined,
+				textContent: textContent,
+			});
+		}
+	}
+
+	return allNotesData;
+}
+
+export { readFileAndMatter, getNoteBySlug, findMarkdownPaths, getAllPublishedNotesData};

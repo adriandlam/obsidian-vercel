@@ -57,10 +57,7 @@ export default function Home() {
 							</Link>
 						</Button>
 						<Button size="lg" variant="link" asChild>
-							<Link href="https://github.com/adriandlam/obsidian-vercel">
-								<Star className="size-4" />
-								Star on GitHub
-							</Link>
+							<Link href="/example">Visit example page</Link>
 						</Button>
 					</div>
 				</div>

@@ -1,3 +1,7 @@
+import { unified } from "unified";
+import remarkParse from "remark-parse";
+import remarkStrip from "strip-markdown";
+import remarkStringify from "remark-stringify";
 import React from "react";
 
 function generateHeadingId(children: React.ReactNode): string {
@@ -20,4 +24,15 @@ function extractText(node: React.ReactNode): string {
 	return "";
 }
 
-export { generateHeadingId, extractText };
+async function extractTextFromMarkdown(
+	markdownContent: string,
+): Promise<string> {
+	const file = await unified()
+		.use(remarkParse)
+		.use(remarkStrip)
+		.use(remarkStringify)
+		.process(markdownContent);
+	return String(file);
+}
+
+export { generateHeadingId, extractText, extractTextFromMarkdown };
