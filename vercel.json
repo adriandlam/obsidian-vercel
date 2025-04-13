@@ -1,7 +1,0 @@
-{
-	"functions": {
-		"app/**": {
-			"includeFiles": "content/example/index.md"
-		}
-	}
-}

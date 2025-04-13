@@ -1,5 +1,6 @@
 //@ts-nocheck
 
+import path from "path";
 import React from "react";
 import { MDXRemote } from "next-mdx-remote/rsc";
 import rehypeKatex from "rehype-katex";
@@ -12,92 +13,34 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { Copy, ExternalLink } from "lucide-react";
 import remarkSmartypants from "remark-smartypants";
-import { CONTENT_DIR } from "@/data";
 import { cn } from "@/lib/utils";
 import CopyButton from "@/components/CopyButton";
 import { findMarkdownPaths, getNoteBySlug } from "@/lib/content";
 import { generateHeadingId, extractText } from "@/lib/md-utils";
 
-export default async function Page({ params }: { params: { slug: string[] } }) {
-	const slugArray = params.slug ?? [];
+export default async function Page({
+	params,
+}: {
+	params: Promise<{ slug: string[] }>;
+}) {
+	const { slug } = await params;
 
-	// Handle root index.md or index.mdx if slug is empty
-	if (slugArray.length === 0) {
-		slugArray.push("index");
+	if (!slug || slug.length === 0) {
+		notFound(); // If slug is empty, it's likely an invalid route access
 	}
 
-	console.log(`[Page Runtime] Rendering slug: ${slugArray.join("/")}`);
-	console.log(`[Page Runtime] CONTENT_DIR from import: ${CONTENT_DIR}`);
-
-	try {
-		// Let's see what's in the current working directory of the function
-		const cwd = process.cwd();
-		console.log(`[Page Runtime] Current Working Directory (cwd): ${cwd}`);
-		const cwdContents = await fs.readdir(cwd);
-		console.log(`[Page Runtime] Contents of cwd (${cwd}):`, cwdContents);
-
-		// Let's see what's in the parent directory of cwd
-		try {
-			const parentDir = path.dirname(cwd);
-			console.log(`[Page Runtime] Parent Directory: ${parentDir}`);
-			const parentDirContents = await fs.readdir(parentDir);
-			console.log(
-				`[Page Runtime] Contents of Parent Directory (${parentDir}):`,
-				parentDirContents,
-			);
-		} catch (parentErr) {
-			console.error(
-				`[Page Runtime] Error listing parent directory:`,
-				parentErr,
-			);
-		}
-
-		// Now check the specific CONTENT_DIR path Vercel *should* have created
-		const expectedContentPath = path.join(cwd, "content"); // Assuming it's copied relative to cwd
-		console.log(
-			`[Page Runtime] Checking expected path: ${expectedContentPath}`,
-		);
-		const expectedDirContents = await fs.readdir(expectedContentPath);
-		console.log(
-			`[Page Runtime] Contents of expected path (${expectedContentPath}):`,
-			expectedDirContents,
-		);
-
-		// Try accessing a specific file within the expected path
-		const testFilePath = path.join(expectedContentPath, "example", "index.md"); // Adjust if needed
-		console.log(
-			`[Page Runtime] Attempting access to test file: ${testFilePath}`,
-		);
-		await fs.access(testFilePath);
-		console.log(
-			`[Page Runtime] SUCCESS: Test file accessible at ${testFilePath}`,
-		);
-	} catch (error) {
-		console.error(
-			`[Page Runtime] ERROR accessing directories or test file:`,
-			error,
-		);
-	}
-
-	console.log(
-		`[Page Runtime] Calling getNoteBySlug for: ${slugArray.join("/")}`,
-	);
-	const note = await getNoteBySlug(slugArray);
+	const note = await getNoteBySlug(slug);
 
 	if (!note) {
-		console.error(
-			`[Page Runtime] getNoteBySlug returned null for slug: ${slugArray.join("/")}. Calling notFound().`,
-		);
+		notFound();
+	}
+
+	// Check publish status *after* confirming the note exists
+	if (note.metadata.publish === false) {
 		notFound();
 	}
 
 	const { metadata, content } = note;
-
-	// Check publish status *after* confirming the note exists
-	if (metadata.publish === false) {
-		console.log(`Note "${slugArray.join("/")}" is not published.`);
-		notFound();
-	}
 
 	return (
 		<article className="prose prose-invert max-w-none">
@@ -263,17 +206,21 @@ export default async function Page({ params }: { params: { slug: string[] } }) {
 }
 
 export async function generateStaticParams() {
-	const allPaths = findMarkdownPaths(CONTENT_DIR);
+	const contentDir = path.join(process.cwd(), "content");
+
+	const allPaths = findMarkdownPaths(contentDir);
+
 	return allPaths;
 }
 
-export const dynamicParams = false;
-
 export async function generateMetadata({
 	params,
-}: { params: { slug: string[] } }): Promise<Metadata> {
-	const slugArray = params.slug ?? [];
-	const note = await getNoteBySlug(slugArray);
+}: {
+	params: Promise<{ slug: string[] }>;
+}): Promise<Metadata> {
+	const { slug } = await params;
+
+	const note = await getNoteBySlug(slug);
 
 	if (!note) {
 		return {
@@ -282,13 +229,14 @@ export async function generateMetadata({
 		};
 	}
 
-	const defaultTitle = slugArray
+	const defaultTitle = slug
 		.map((s) => s.charAt(0).toUpperCase() + s.slice(1))
 		.join(" - ");
 
 	return {
 		title: note.metadata.title || defaultTitle,
-		description:
-			note.metadata.description || `Content for ${slugArray.join("/")}.`,
+		description: note.metadata.description || `Content for ${slug.join("/")}.`,
 	};
 }
+
+export const dynamicParams = true;

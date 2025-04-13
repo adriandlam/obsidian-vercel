@@ -1,122 +1,177 @@
 import fs from "fs";
 import matter from "gray-matter";
 import path from "path";
-import { CONTENT_DIR } from "../data";
 import { extractTextFromMarkdown } from "./md-utils";
+import { CONTENT_DIR } from "@/data";
 
 export interface SearchIndexItem {
-	slug: string[];
-	title: string;
-	excerpt?: string;
-	textContent: string;
+    slug: string[];
+    title: string;
+    excerpt?: string;
+    textContent: string;
+}
+
+// Helper function to safely check if a file exists
+export function safeFileExists(filePath: string): boolean {
+    try {
+        return fs.existsSync(filePath);
+    } catch (error) {
+        console.error(`[safeFileExists] Error checking if file exists: ${filePath}`, error);
+        return false;
+    }
 }
 
 // Helper function to read file and parse frontmatter
 // Returns null if file doesn't exist or reading fails
-function readFileAndMatter(
-	filePath: string,
+export function readFileAndMatter(
+    filePath: string,
 ): { metadata: Record<string, unknown>; content: string } | null {
-	try {
-		const fileContent = fs.readFileSync(filePath, "utf8");
-		const { data: metadata, content } = matter(fileContent);
-		return { metadata, content };
-	} catch (error: any) {
-		if (error.code === "ENOENT") {
-			// File not found, this is expected in some cases
-		} else {
-			// Log other errors (e.g., permission issues)
-			console.error(`Error reading file ${filePath}:`, error);
-		}
-		return null;
-	}
+    try {
+        // Check if file exists *before* trying to read
+        if (!safeFileExists(filePath)) {
+            return null;
+        }
+        const fileContent = fs.readFileSync(filePath, "utf8");
+        const { data: metadata, content } = matter(fileContent);
+        return { metadata, content };
+    } catch (error: any) {
+        // Log errors other than ENOENT (which existsSync should prevent)
+        console.error(`[readFileAndMatter] Error reading file ${filePath}:`, error);
+        return null;
+    }
 }
 
 // Helper function to get the MDX content and metadata
-async function getNoteBySlug(slugArray: string[]) {
-	if (!slugArray || slugArray.length === 0) {
-		return null;
-	}
+export async function getNoteBySlug(slugArray: string[]) {
+    if (!slugArray || slugArray.length === 0) {
+        console.error("[getNoteBySlug] Received empty or invalid slugArray:", slugArray);
+        return null;
+    }
 
-	// Try reading direct file match (e.g., /class-1/example -> content/class-1/example.md)
-	const directPathBase = path.join(CONTENT_DIR, ...slugArray);
-	let note = readFileAndMatter(`${directPathBase}.md`);
-	if (note) return note;
+    const slugPath = path.join(CONTENT_DIR, ...slugArray);
 
-	note = readFileAndMatter(`${directPathBase}.mdx`);
-	if (note) return note;
+    let note: { metadata: Record<string, unknown>; content: string } | null = null;
 
-	// If no direct file, try reading an index file within a directory of the same name
-	// (e.g., /class-1 -> content/class-1/index.md)
-	const indexPathBase = path.join(CONTENT_DIR, ...slugArray);
-	note = readFileAndMatter(`${indexPathBase}/index.md`);
-	if (note) return note;
+    // 1. Try direct file match (.md then .mdx)
+    const mdPath = `${slugPath}.md`;
+    const mdxPath = `${slugPath}.mdx`;
+    
+    note = readFileAndMatter(mdPath);
+    if (note) {
+        return note;
+    }
 
-	note = readFileAndMatter(`${indexPathBase}/index.mdx`);
-	if (note) return note;
+    note = readFileAndMatter(mdxPath);
+    if (note) {
+        return note;
+    }
 
-	// If neither found, return null
-	console.warn(`No content file found for slug: ${slugArray.join("/")}`);
-	return null;
+    // 2. Try index file within the directory (.md then .mdx)
+    const indexMdPath = path.join(slugPath, "index.md");
+    const indexMdxPath = path.join(slugPath, "index.mdx");
+    
+    note = readFileAndMatter(indexMdPath);
+    if (note) {
+        return note;
+    }
+
+    note = readFileAndMatter(indexMdxPath);
+    if (note) {
+        return note;
+    }
+
+    console.error(`[getNoteBySlug] Failed to find note content for slug: [${slugArray.join(', ')}] at path: ${slugPath}`);
+    return null;
+}
+
+// Helper function to safely get directory entries
+function safeReadDir(dir: string): fs.Dirent[] {
+    try {
+        if (!safeFileExists(dir)) {
+            console.error(`[safeReadDir] Directory does not exist: ${dir}`);
+            return [];
+        }
+        return fs.readdirSync(dir, { withFileTypes: true });
+    } catch (error) {
+        console.error(`[safeReadDir] Error reading directory ${dir}:`, error);
+        return [];
+    }
 }
 
 // Recursive function to find all .md/.mdx files and return their slug paths
-function findMarkdownPaths(
-	dir: string,
-	basePath: string = dir,
+export function findMarkdownPaths(
+    dir: string,
+    basePath?: string,
 ): { params: { slug: string[] } }[] {
-	let paths: { params: { slug: string[] } }[] = [];
-	const entries = fs.readdirSync(dir, { withFileTypes: true });
+    
+    const absoluteDir = path.isAbsolute(dir) ? dir : path.join(process.cwd(), dir);
+    const base = basePath || absoluteDir;
+    let paths: { params: { slug: string[] } }[] = [];
 
-	for (const entry of entries) {
-		const fullPath = path.join(dir, entry.name);
-		const relativePath = path.relative(basePath, fullPath);
-		const pathSegments = relativePath.split(path.sep);
+    const entries = safeReadDir(absoluteDir);
 
-		if (entry.isDirectory()) {
-			// Recursively search in subdirectories
-			paths = paths.concat(findMarkdownPaths(fullPath, basePath));
-		} else if (entry.isFile() && /\.(md|mdx)$/i.test(entry.name)) {
-			// Found a markdown file
-			const parsedPath = path.parse(entry.name);
+    for (const entry of entries) {
+        const fullPath = path.join(absoluteDir, entry.name);
+        // Skip hidden files/folders
+        if (entry.name.startsWith('.')) {
+            continue;
+        }
 
-			let slug: string[];
+        const relativePath = path.relative(base, fullPath);
+        const pathSegments = relativePath.split(path.sep).filter(Boolean); // Filter out empty segments
 
-			// See if it's an index file
-			if (/^index$/i.test(parsedPath.name)) {
-				slug = pathSegments.slice(0, -1);
-			} else {
-				slug = [...pathSegments.slice(0, -1), parsedPath.name];
-			}
+        if (entry.isDirectory()) {
+            paths = paths.concat(findMarkdownPaths(fullPath, base));
+        } else if (entry.isFile() && /\.(md|mdx)$/i.test(entry.name)) {
+            const parsedPath = path.parse(entry.name);
+            let slug: string[];
 
-			if (slug.length > 0 && !slug.some((segment) => segment.startsWith("."))) {
-				paths.push({ params: { slug } });
-			}
-		}
-	}
+            // If it's an index file, the slug is the directory path
+            if (/^index$/i.test(parsedPath.name)) {
+                // pathSegments includes the filename, so slice it off
+                slug = pathSegments.slice(0, -1);
+            } else {
+                // Otherwise, slug includes the filename (without extension)
+                // pathSegments includes the filename, replace last segment with name w/o ext
+                slug = [...pathSegments.slice(0, -1), parsedPath.name];
+            }
 
-	return paths;
+            // Ensure slug is not empty (e.g., for content/index.md) and doesn't contain hidden segments
+            if (slug.length > 0 && !slug.some((segment) => segment.startsWith("."))) {
+                paths.push({ params: { slug } });
+            } else if (slug.length === 0 && /^index$/i.test(parsedPath.name) && absoluteDir === base) {
+                // Handle root index file
+                paths.push({ params: { slug: [] } });
+            }
+        }
+    }
+    
+    return paths;
 }
 
-async function getAllPublishedNotesData(): Promise<SearchIndexItem[]> {
-	const allPaths = findMarkdownPaths(CONTENT_DIR);
-	const allNotesData: SearchIndexItem[] = [];
+export async function getAllPublishedNotesData(): Promise<SearchIndexItem[]> {
+    const allPaths = findMarkdownPaths(CONTENT_DIR);
+    
+    const allNotesData: SearchIndexItem[] = [];
 
-	for (const pathData of allPaths) {
-		const slug = pathData.params.slug;
-		const note = await getNoteBySlug(slug);
+    for (const pathData of allPaths) {
+        const slug = pathData.params.slug;
+        const note = await getNoteBySlug(slug);
 
-		if (note && note.metadata.publish !== false) {
-			const textContent = await extractTextFromMarkdown(note.content);
-			allNotesData.push({
-				slug: slug,
-				title: (note.metadata.title as string) || slug.join(" "),
-				excerpt: (note.metadata.excerpt as string) || undefined,
-				textContent: textContent,
-			});
-		}
-	}
+        if (note && note.metadata.publish !== false) {
+            const textContent = await extractTextFromMarkdown(note.content);
+            allNotesData.push({
+                slug: slug,
+                title: (note.metadata.title as string) || slug.join(" "),
+                excerpt: (note.metadata.excerpt as string) || undefined,
+                textContent: textContent,
+            });
+        } else if (!note) {
+            console.warn(`[getAllPublishedNotesData] Note not found for generated slug: [${slug.join('/')}], skipping index entry.`);
+        } else {
+            // Note exists but publish is false
+        }
+    }
 
-	return allNotesData;
+    return allNotesData;
 }
-
-export { readFileAndMatter, getNoteBySlug, findMarkdownPaths, getAllPublishedNotesData};

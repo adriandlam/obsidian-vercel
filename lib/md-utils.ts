@@ -20,7 +20,11 @@ function generateHeadingId(children: React.ReactNode): string {
 function extractText(node: React.ReactNode): string {
 	if (typeof node === "string") return node;
 	if (Array.isArray(node)) return node.map(extractText).join("");
-	if (React.isValidElement(node)) return extractText(node.props.children);
+
+	if (React.isValidElement(node) && node.props) {
+		const propsWithChildren = node.props as React.PropsWithChildren<unknown>;
+		return extractText(propsWithChildren.children);
+	}
 	return "";
 }
 

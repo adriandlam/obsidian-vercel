@@ -1,5 +1,3 @@
-import path from 'node:path';
+import path from "path";
 
-const CONTENT_DIR = path.join(process.cwd(), 'content');
-
-export { CONTENT_DIR }
+export const CONTENT_DIR = path.join(process.cwd(), "content");

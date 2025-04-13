@@ -20,6 +20,19 @@ export const metadata: Metadata = {
 	description:
 		"Publish your Obsidian notes with Vercel, securely and effortlessly.",
 	robots: "noindex",
+	openGraph: {
+		title: "Obsidian Vercel",
+		description:
+			"Publish your Obsidian notes with Vercel, securely and effortlessly.",
+		type: "website",
+		images: [
+			{
+				url: "/preview.png",
+				width: 1200,
+				height: 630,
+			},
+		],
+	},
 };
 
 export default function RootLayout({
