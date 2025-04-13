@@ -26,9 +26,68 @@ export default async function Page({ params }: { params: { slug: string[] } }) {
 		slugArray.push("index");
 	}
 
+	console.log(`[Page Runtime] Rendering slug: ${slugArray.join("/")}`);
+	console.log(`[Page Runtime] CONTENT_DIR from import: ${CONTENT_DIR}`);
+
+	try {
+		// Let's see what's in the current working directory of the function
+		const cwd = process.cwd();
+		console.log(`[Page Runtime] Current Working Directory (cwd): ${cwd}`);
+		const cwdContents = await fs.readdir(cwd);
+		console.log(`[Page Runtime] Contents of cwd (${cwd}):`, cwdContents);
+
+		// Let's see what's in the parent directory of cwd
+		try {
+			const parentDir = path.dirname(cwd);
+			console.log(`[Page Runtime] Parent Directory: ${parentDir}`);
+			const parentDirContents = await fs.readdir(parentDir);
+			console.log(
+				`[Page Runtime] Contents of Parent Directory (${parentDir}):`,
+				parentDirContents,
+			);
+		} catch (parentErr) {
+			console.error(
+				`[Page Runtime] Error listing parent directory:`,
+				parentErr,
+			);
+		}
+
+		// Now check the specific CONTENT_DIR path Vercel *should* have created
+		const expectedContentPath = path.join(cwd, "content"); // Assuming it's copied relative to cwd
+		console.log(
+			`[Page Runtime] Checking expected path: ${expectedContentPath}`,
+		);
+		const expectedDirContents = await fs.readdir(expectedContentPath);
+		console.log(
+			`[Page Runtime] Contents of expected path (${expectedContentPath}):`,
+			expectedDirContents,
+		);
+
+		// Try accessing a specific file within the expected path
+		const testFilePath = path.join(expectedContentPath, "example", "index.md"); // Adjust if needed
+		console.log(
+			`[Page Runtime] Attempting access to test file: ${testFilePath}`,
+		);
+		await fs.access(testFilePath);
+		console.log(
+			`[Page Runtime] SUCCESS: Test file accessible at ${testFilePath}`,
+		);
+	} catch (error) {
+		console.error(
+			`[Page Runtime] ERROR accessing directories or test file:`,
+			error,
+		);
+	}
+
+	console.log(
+		`[Page Runtime] Calling getNoteBySlug for: ${slugArray.join("/")}`,
+	);
 	const note = await getNoteBySlug(slugArray);
 
 	if (!note) {
+		console.error(
+			`[Page Runtime] getNoteBySlug returned null for slug: ${slugArray.join("/")}. Calling notFound().`,
+		);
 		notFound();
 	}
 
