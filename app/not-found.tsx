@@ -1,4 +1,4 @@
-import BgBorder from "@/components/BgBorder";
+import BgBorder from "@/components/layout/BgBorder";
 import { Info } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";

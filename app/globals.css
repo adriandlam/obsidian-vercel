@@ -114,13 +114,13 @@
 }
 
 @layer base {
-  * {
-    @apply border-border outline-ring/50;
+	* {
+		@apply border-border outline-ring/50;
 	}
-  body {
-    @apply bg-background text-foreground;
+	body {
+		@apply bg-background text-foreground;
 	}
-  /* [role="button"],
+	/* [role="button"],
   button {
     cursor: pointer;
   }
@@ -131,7 +131,11 @@
 }
 
 .katex-display {
-  @apply block overflow-auto text-center !my-8;
+	@apply block overflow-auto text-center !my-8;
+}
+
+mark {
+	@apply bg-primary text-primary-foreground py-0.5 rounded px-0.5;
 }
 
 a {

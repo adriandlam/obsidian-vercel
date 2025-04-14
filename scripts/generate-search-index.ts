@@ -16,12 +16,14 @@ const outputPath = path.join(outputDir, "search-index.json");
 
 async function generateIndex() {
 	const startTime = Date.now();
-	const spinner = ora(`Generating search index for ${chalk.gray(path.relative(projectRoot, "content"))}...`).start();
-	console.log("")
+	const spinner = ora(
+		`Generating search index for ${chalk.gray(path.relative(projectRoot, "content"))}...`,
+	).start();
+	console.log("");
 
 	try {
 		const notes = await getAllPublishedNotesData();
-		const indexedSlugs = notes.map(note => note.slug.join("/"));
+		const indexedSlugs = notes.map((note) => note.slug.join("/"));
 		console.log(`\n Indexed Notes: ${chalk.green(`+${indexedSlugs.length}`)}`);
 		indexedSlugs.forEach((slug, i) => {
 			console.log(` ${chalk.green("+")} ${slug}`);
@@ -37,14 +39,13 @@ async function generateIndex() {
 		spinner.succeed(chalk.green("Search index generated successfully."));
 		const endTime = Date.now();
 		const elapsed = endTime - startTime;
-		const formattedTime = elapsed < 1000
-			? `${elapsed}ms`
-			: `${(elapsed / 1000).toFixed(2)}s`;
+		const formattedTime =
+			elapsed < 1000 ? `${elapsed}ms` : `${(elapsed / 1000).toFixed(2)}s`;
 
 		console.log(chalk.gray(path.relative(projectRoot, outputPath)));
 		console.log("");
 		console.log(`Done in ${formattedTime}`);
-		process.exit(0)
+		process.exit(0);
 	} catch (error) {
 		spinner.fail(chalk.red("Failed to generate search index."));
 		console.error(chalk.red("Error:"), error);

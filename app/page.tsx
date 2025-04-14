@@ -1,12 +1,12 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
-import BgBorder from "@/components/BgBorder";
+import BgBorder from "@/components/layout/BgBorder";
 import { Info } from "lucide-react";
 
 export default function Home() {
 	return (
-		<div className="relative h-screen w-screen bg-background text-foreground">
+		<div className="relative h-screen w-full bg-background text-foreground">
 			{/* Background border */}
 			<BgBorder />
 

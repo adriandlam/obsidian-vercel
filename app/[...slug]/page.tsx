@@ -35,7 +35,6 @@ export default async function Page({
 		notFound();
 	}
 
-	// Check publish status *after* confirming the note exists
 	if (note.metadata.publish === false) {
 		notFound();
 	}

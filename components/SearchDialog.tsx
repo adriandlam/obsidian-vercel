@@ -181,13 +181,13 @@ export default function SearchDialog() {
 	};
 
 	return (
-		<div>
+		<div className="w-full">
 			{/* Trigger Button/Input */}
 			<div className="relative group">
 				<Search className="size-4 absolute top-1/2 -translate-y-1/2 left-2.5 text-muted-foreground pointer-events-none" />
 				<Input
 					placeholder="Search notes..."
-					className="pl-9 w-full md:w-[200px] lg:w-[300px] pr-8 cursor-pointer group-hover:!bg-muted/50 !bg-background transition-colors ease-in shadow-none"
+					className="pl-9 w-full pr-8 cursor-pointer group-hover:!bg-muted/50 !bg-background transition-colors ease-in shadow-none"
 					onClick={() => setIsOpen(true)}
 					readOnly
 					value=""
@@ -308,7 +308,6 @@ export default function SearchDialog() {
 												{/* Render title snippet or plain title */}
 												<div className="font-medium text-foreground mb-1">
 													<span
-														className="[&_mark]:bg-muted [&_mark]:text-red-400 [&_mark]:font-medium [&_mark]:rounded"
 														dangerouslySetInnerHTML={{
 															__html: sanitize(
 																titleSnippet || result.obj.title,
@@ -321,7 +320,7 @@ export default function SearchDialog() {
 												</div>
 												{/* Render content/excerpt snippet */}
 												<span
-													className="text-muted-foreground text-sm [&_mark]:bg-muted [&_mark]:text-red-400 [&_mark]:font-medium [&_mark]:rounded"
+													className="text-muted-foreground text-sm"
 													dangerouslySetInnerHTML={{
 														__html: sanitize(
 															contentSnippet || result.obj.excerpt || "",
