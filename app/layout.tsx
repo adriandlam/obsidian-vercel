@@ -4,6 +4,7 @@ import { ThemeProvider } from "@/components/theme-provider";
 import "./globals.css";
 import { ModeToggle } from "@/components/ModeToggle";
 import SearchDialog from "@/components/SearchDialog";
+import Navbar from "@/components/Navbar";
 
 const geistSans = Geist({
 	variable: "--font-geist-sans",
@@ -52,12 +53,7 @@ export default function RootLayout({
 					disableTransitionOnChange
 				>
 					{children}
-					<div className="fixed right-2 top-2">
-						<SearchDialog />
-					</div>
-					<div className="fixed right-2 bottom-2">
-						<ModeToggle />
-					</div>
+					<Navbar />
 				</ThemeProvider>
 			</body>
 		</html>

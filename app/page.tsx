@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Star } from "lucide-react";
 import Image from "next/image";
+import BgBorder from "@/components/BgBorder";
+import { Info } from "lucide-react";
 
 export default function Home() {
 	return (
@@ -11,7 +12,7 @@ export default function Home() {
 
 			{/* Content area */}
 			<div className="absolute left-[10%] right-[10%] md:left-[20%] md:right-[20%] top-[10%] md:top-[15%] bottom-[10%] md:bottom-[15%] flex items-center justify-center overflow-hidden">
-				<div className="max-w-full p-8 text-center space-y-6">
+				<div className="max-w-xl p-8 text-center space-y-6">
 					<h1 className="text-5xl font-medium tracking-tight">
 						Obsidian Vercel
 					</h1>
@@ -33,9 +34,12 @@ export default function Home() {
 							<li>Secure-by-default with no exposed metadata</li>
 						</ul>
 					</div>
-					<div className="rounded-md border border-dashed p-4 bg-muted/50 text-muted-foreground text-sm max-w-md mx-auto">
-						See the example folder structure in <code>content/</code> to
-						understand how your notes are organized and rendered.
+					<div className="rounded-md border border-dashed p-4 text-muted-foreground text-sm max-w-md mx-auto flex gap-2">
+						<Info className="size-4 shrink-0 mt-0.5" />
+						<p className="text-muted-foreground text-sm text-left">
+							See examples in <code>content/</code> to understand how your notes
+							are organized and rendered.
+						</p>
 					</div>
 					<div className="space-x-4">
 						<Button size="lg" asChild>
@@ -63,36 +67,5 @@ export default function Home() {
 				</div>
 			</div>
 		</div>
-	);
-}
-
-function BgBorder() {
-	return (
-		<>
-			{/* Vertical borders */}
-			<div className="absolute left-[5%] md:left-[20%] top-0 h-full border-l border-dashed" />
-			<div className="absolute right-[5%] md:right-[20%] top-0 h-full border-l border-dashed" />
-
-			{/* Horizontal borders */}
-			<div className="absolute top-[10%] md:top-[15%] left-0 w-full border-t border-dashed" />
-			<div className="absolute bottom-[10%] md:bottom-[15%] left-0 w-full border-t border-dashed" />
-
-			{/* Crosses at intersections */}
-			{/* Top-left intersection */}
-			<div className="absolute left-[5%] top-[10%] md:left-[20%] md:top-[15%] w-4 h-[2px] bg-primary z-10 rounded-sm" />
-			<div className="absolute left-[5%] top-[10%] md:left-[20%] md:top-[15%] w-[2px] h-4 bg-primary z-10 rounded-sm" />
-
-			{/* Top-right intersection */}
-			<div className="absolute right-[5%] top-[10%] md:right-[20%] md:top-[15%] w-4 h-[2px] bg-primary z-10 rounded-sm" />
-			<div className="absolute right-[5%] top-[10%] md:right-[20%] md:top-[15%] w-[2px] h-4 bg-primary z-10 rounded-sm" />
-
-			{/* Bottom-left intersection */}
-			<div className="absolute left-[5%] bottom-[10%] md:left-[20%] md:bottom-[15%] w-4 h-[2px] bg-primary z-10 rounded-sm" />
-			<div className="absolute left-[5%] bottom-[10%] md:left-[20%] md:bottom-[15%] w-[2px] h-4 bg-primary z-10 rounded-sm" />
-
-			{/* Bottom-right intersection */}
-			<div className="absolute right-[5%] bottom-[10%] md:right-[20%] md:bottom-[15%] w-4 h-[2px] bg-primary z-10 rounded-sm" />
-			<div className="absolute right-[5%] bottom-[10%] md:right-[20%] md:bottom-[15%] w-[2px] h-4 bg-primary z-10 rounded-sm" />
-		</>
 	);
 }

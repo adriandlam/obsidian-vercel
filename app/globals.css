@@ -45,7 +45,8 @@
 
 :root {
 	--radius: 0.625rem;
-	--background: #fffcf8;
+	/* --background: #fffcf8; */
+	--background: oklch(1 0 0);
 	--foreground: oklch(0.145 0 0);
 	--card: oklch(1 0 0);
 	--card-foreground: oklch(0.145 0 0);
@@ -119,14 +120,14 @@
   body {
     @apply bg-background text-foreground;
 	}
-  [role="button"],
+  /* [role="button"],
   button {
     cursor: pointer;
   }
 
   :disabled {
     cursor: default;
-  }
+  } */
 }
 
 .katex-display {
@@ -134,5 +135,9 @@
 }
 
 a {
-	@apply underline-offset-2
+	@apply underline-offset-2;
+}
+
+code {
+	@apply text-red-400 bg-muted px-1 py-0.5 rounded;
 }

@@ -183,16 +183,16 @@ export default function SearchDialog() {
 	return (
 		<div>
 			{/* Trigger Button/Input */}
-			<div className="relative">
+			<div className="relative group">
 				<Search className="size-4 absolute top-1/2 -translate-y-1/2 left-2.5 text-muted-foreground pointer-events-none" />
 				<Input
 					placeholder="Search notes..."
-					className="pl-9 w-full md:w-[200px] lg:w-[300px] pr-8 cursor-pointer"
+					className="pl-9 w-full md:w-[200px] lg:w-[300px] pr-8 cursor-pointer group-hover:!bg-muted/50 !bg-background transition-colors ease-in shadow-none"
 					onClick={() => setIsOpen(true)}
 					readOnly
 					value=""
 				/>
-				<kbd className="absolute top-1/2 -translate-y-1/2 right-2.5 text-muted-foreground font-mono text-sm pointer-events-none">
+				<kbd className="absolute top-1/2 -translate-y-1/2 right-2.5 text-muted-foreground font-mono text-sm pointer-events-none group-hover:text-foreground group-hover:bg-muted/75 transition-colors ease-in w-5 h-6 flex justify-center items-center rounded border">
 					/
 				</kbd>
 			</div>
