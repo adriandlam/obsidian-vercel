@@ -18,7 +18,7 @@ import CopyButton from "@/components/CopyButton";
 import { findMarkdownPaths, getNoteBySlug } from "@/lib/content";
 import { generateHeadingId, extractText } from "@/lib/md-utils";
 
-export default async function Page({
+export default async function NotePage({
 	params,
 }: {
 	params: Promise<{ slug: string[] }>;

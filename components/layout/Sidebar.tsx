@@ -53,7 +53,7 @@ export default function Sidebar({ treeData }: SidebarProps) {
 			</aside>
 			<Button
 				size="icon"
-				variant="outline"
+				variant="ghost"
 				onClick={() => setIsOpen(!isOpen)}
 				className={cn(
 					"absolute top-2 z-20 shadow-none",

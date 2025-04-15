@@ -1,12 +1,12 @@
 ---
-title: Example Home Page
-excerpt: This is an optional excerpt for the example page. This gives you a quick summary of the page's content.
+title: An example route
+excerpt: An overview of Obsidian Vercel and how to use it.
 created: 2025-04-12
 updated: 2025-04-12
 publish: true
 ---
 
-# This is the home page of the "example" route
+# An example route
 
 You’re viewing the default page for this route because of the `index.md` file in the `content/example` folder.
 
