@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
-import BgBorder from "@/components/layout/BgBorder";
+import BgBorder from "@/components/layout/bg-border";
 import { Info } from "lucide-react";
 
 export default function Home() {

@@ -1,14 +1,14 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import { ThemeProvider } from "@/components/layout/ThemeProvider";
+import { ThemeProvider } from "@/components/layout/theme-provider";
 import "./globals.css";
-import Sidebar from "@/components/layout/Sidebar";
+import Sidebar from "@/components/layout/sidebar";
 import { getDirectoryTree } from "@/lib/content";
 import { CONTENT_DIR } from "@/data";
-import SearchDialog from "@/components/SearchDialog";
+import SearchDialog from "@/components/search-dialog";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { ModeToggle } from "@/components/ModeToggle";
+import { ModeToggle } from "@/components/mode-toggle";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",

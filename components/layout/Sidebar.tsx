@@ -2,13 +2,13 @@
 
 import { usePathname } from "next/navigation";
 import { useState } from "react";
-import DirectoryItem from "../DirectoryItem";
+import DirectoryItem from "@/components/directory-item";
 import type { DirectoryNode } from "@/lib/content";
 import Link from "next/link";
 import { SidebarClose, SidebarOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import SearchDialog from "../SearchDialog";
+import SearchDialog from "../search-dialog";
 
 interface SidebarProps {
   treeData: DirectoryNode[];

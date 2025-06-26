@@ -1,6 +1,6 @@
 "use client";
 
-import SearchDialog from "@/components/SearchDialog";
+import SearchDialog from "@/components/search-dialog";
 
 export default function Navbar() {
   return (

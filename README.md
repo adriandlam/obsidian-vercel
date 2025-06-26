@@ -8,7 +8,8 @@ Obsidian-Vercel is a toolkit for building a fast, searchable website from your O
 
 The project is designed for simplicity: place your Markdown files in the `content/` directory, and the project structure automatically turns them into web pages.
 
-> [!NOTE] > **A Note on Supporting Obsidian**
+> [!NOTE]
+> **A Note on Supporting Obsidian**
 >
 > This project provides a free, self-hosted way to publish your notes. However, it is not a replacement for the official Obsidian Sync service.
 >
@@ -24,6 +25,10 @@ The project is designed for simplicity: place your Markdown files in the `conten
 - **Standard Technologies:** Built with Next.js, React, and Tailwind CSS for a customizable and modern web experience.
 - **Light & Dark Mode:** A theme toggle is included by default.
 
+## Quick Deploy
+
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fadriandlam%2Fobsidian-vercel&project-name=obsidian-vercel&repository-name=obsidian-vercel)
+
 ## Installation & Setup
 
 To get your own version of the site running, follow these steps.
@@ -36,7 +41,7 @@ Clone this repository to your local machine.
 git clone [https://github.com/adriandlam/obsidian-vercel.git](https://github.com/adriandlam/obsidian-vercel.git)
 cd obsidian-vercel
 
-**2. Install Dependencies
+**2. Install Dependencies**
 
 This project uses `pnpm` as its package manager.
 
@@ -149,5 +154,4 @@ This project builds upon several open-source technologies:
 ## License
 
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for more details.
-
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fadriandlam%2Fobsidian-vercel&project-name=obsidian-vercel&repository-name=obsidian-vercel)
+``
